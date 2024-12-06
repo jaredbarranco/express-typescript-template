@@ -1,0 +1,10 @@
+services:
+   app:
+      build:
+        context: .
+        dockerfile: Containerfile
+      container_name: express-typescript-template
+      ports:
+        - "${PORT}:${PORT}"
+      env_file:
+        - .env
