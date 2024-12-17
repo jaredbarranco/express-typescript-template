@@ -14,5 +14,13 @@ newString=$1
 oldString="express-typescript-template"  # Replace with the actual old string
 
 # Perform the find and replace operation
-find . -type f -exec sed -i "s/${oldString}/${newString}/g" {} +
+if [[ $(uname) == "Darwin" ]]; then
+    find . -maxdepth 1 -type f -exec sed -i '' -e "s|${oldString}|${newString}|g" {} +
+elif [[ $(uname) == "Linux" ]]; then
+    find . -maxdepth 1 -type f -exec sed -i -e "s|${oldString}|${newString}|g" {} +
+else
+    echo "Only Linux or Darwin (Mac) supported... exiting"
+fi
+
+rm ./rename_project.sh
 
