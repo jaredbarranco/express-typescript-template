@@ -18,7 +18,7 @@ RUN npm run build
 
 # Stage 2: Create a production-ready image
 FROM node:20-alpine
-
+RUN apk add curl
 # Set the working directory
 WORKDIR /app
 
@@ -31,6 +31,9 @@ COPY --from=builder /app/dist ./dist
 
 # Expose the application port (change if necessary)
 EXPOSE $PORT
+
+HEALTHCHECK --interval=5m --timeout=3s --retries=3 \
+  CMD curl -fs http://localhost:3000/health || exit 1
 
 # Command to run the application
 CMD ["node", "dist/server.js"]
