@@ -7,8 +7,9 @@ import express from 'express';
 import { Server } from 'http';
 import { createHttpTerminator, HttpTerminator } from 'http-terminator';
 import { HealthRoutes } from './routes';
-
-
+import { GlobalRouter } from './shared/router'
+import { LoggerService } from './shared/services'
+import correlator = require('express-correlation-id')
 export const app = express();
 
 //environment variable dependents
@@ -36,4 +37,16 @@ process.on('SIGINT', () => {
 	httpTerminator.terminate();
 })
 
+// We add some properties to the req object for per thread context - correlationId and the related LoggerService
+//	We have to declare a global override for type checking
+app.use(correlator());
+app.use(GlobalRouter)
+declare global {
+	namespace Express {
+		interface Request {
+			correlationId: any,
+			logger: LoggerService
+		}
+	}
+}
 app.use('/health', HealthRoutes)
